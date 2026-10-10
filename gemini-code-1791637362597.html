@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahmed &amp; Rawan | Wedding Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&family=Cairo:wght@300;400;500;600&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF4EA;
+    --cream-2:#F1E9D8;
+    --teal:#0E4F52;
+    --teal-deep:#0A3A3C;
+    --teal-tint:#DCEDEA;
+    --gold:#B8912F;
+    --gold-light:#D9BB6B;
+    --ink:#1C2624;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Jost',sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.no-scroll{overflow:hidden; height:100vh;}
+  body.ar{
+    direction:rtl;
+    font-family:'Cairo',sans-serif;
+  }
+  .page{
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--cream);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 0 60px rgba(10,58,60,0.08);
+  }
+
+  /* ---------- Cinematic Envelope Intro (طابق الفيديو بالمللي) ---------- */
+  .envelope-overlay{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    max-width:520px;
+    margin:0 auto;
+    background:var(--cream);
+    display:block;
+    overflow:hidden;
+    transition:opacity 0.7s ease, visibility 0.7s ease;
+  }
+  .envelope-overlay.opened{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+  }
+  .envelope-wrap{
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+  .envelope-box{
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+
+  /* الكارت الداخلي الفخم اللي بيظهر لما الظرف يتفتح */
+  .intro-card{
+    position:absolute;
+    z-index:1;
+    left:7%; right:7%; top:10%; bottom:10%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px 22px;
+    color:#1C2624;
+    border:1px solid rgba(184,145,47,0.7);
+    outline:1px solid rgba(184,145,47,0.3);
+    outline-offset:-9px;
+    background:var(--cream);
+    box-shadow:0 24px 70px rgba(10,58,60,0.15);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(10%) scale(.72);
+    transition:transform 1.1s cubic-bezier(.2,.75,.2,1), opacity .6s ease, visibility .6s ease, border-radius 1s ease;
+  }
+  .intro-card-ornament{
+    width:76px;height:76px;
+    border:1px solid var(--gold);
+    border-radius:50%;
+    display:grid;place-items:center;
+    margin-bottom:22px;
+    color:var(--gold);
+    font-family:'Cormorant Garamond',serif;
+    font-size:31px;
+  }
+  .intro-card-kicker{
+    font-size:10px;
+    letter-spacing:.34em;
+    color:var(--gold);
+    margin-bottom:18px;
+    font-weight:600;
+  }
+  .intro-card-names{
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(37px,10vw,52px);
+    line-height:1;
+    font-weight:500;
+    color:var(--teal-deep);
+  }
+  .intro-card-amp{
+    color:var(--gold);
+    font-family:'Cormorant Garamond',serif;
+    font-size:27px;
+    font-style:italic;
+    margin:8px 0;
+  }
+  .intro-card-date{
+    color:#4B5C59;
+    font-family:'Cormorant Garamond',serif;
+    letter-spacing:.16em;
+    font-size:15px;
+    margin-top:15px;
+  }
+  body.ar .intro-card-names{font-family:'Aref Ruqaa',serif;}
+
+  .envelope-overlay.card-reveal .intro-card{
+    opacity:1;visibility:visible;
+    transform:translateY(0) scale(1);
+  }
+  .envelope-overlay.card-expand .intro-card{
+    left:0;right:0;top:0;bottom:0;
+    border-radius:0;
+    transform:scale(1);
+  }
+
+  /* أجزاء الظرف الأربعة اللي بتتفتح وتطير برا الشاشة */
+  .envelope-panel{
+    position:absolute;
+    inset:0;
+    background:var(--cream);
+    z-index:2;
+    transition:transform 0.9s cubic-bezier(0.55,0.05,0.25,1), opacity 0.7s ease;
+  }
+  .envelope-panel svg{width:100%;height:100%;display:block;}
+  .panel-top{ clip-path:polygon(0% 0%, 100% 0%, 50% 50%); }
+  .panel-right{ clip-path:polygon(100% 0%, 100% 100%, 50% 50%); }
+  .panel-bottom{ clip-path:polygon(100% 100%, 0% 100%, 50% 50%); }
+  .panel-left{ clip-path:polygon(0% 100%, 0% 0%, 50% 50%); }
+
+  .envelope-overlay.flaps-open .panel-top{ transform:translateY(-130%) rotate(-10deg); opacity:0; }
+  .envelope-overlay.flaps-open .panel-right{ transform:translateX(130%) rotate(10deg); opacity:0; }
+  .envelope-overlay.flaps-open .panel-bottom{ transform:translateY(130%) rotate(10deg); opacity:0; }
+  .envelope-overlay.flaps-open .panel-left{ transform:translateX(-130%) rotate(-10deg); opacity:0; }
+
+  /* ختم الشمع الذهبي في المنتصف */
+  .envelope-seal{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:85px;
+    height:85px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    z-index:10;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:0;
+    transition:transform 0.4s ease, opacity 0.4s ease;
+  }
+  .envelope-seal svg{width:100%;height:100%;display:block;}
+  .envelope-overlay.glowing .envelope-seal{
+    box-shadow:0 0 20px 8px rgba(184,145,47,0.8);
+    animation:seal-pulse 0.7s ease-in-out infinite;
+  }
+  @keyframes seal-pulse{
+    0%,100%{ transform:translate(-50%,-50%) scale(1); }
+    50%{ transform:translate(-50%,-50%) scale(1.12); }
+  }
+  .envelope-overlay.opened .envelope-seal{
+    transform:translate(-50%,-50%) scale(1.8);
+    opacity:0;
+    pointer-events:none;
+  }
+  .envelope-tap{
+    position:absolute;
+    left:50%;
+    bottom:8%;
+    transform:translateX(-50%);
+    color:var(--teal-deep);
+    font-size:11px;
+    letter-spacing:0.25em;
+    text-align:center;
+    animation:pulse 1.8s ease-in-out infinite;
+    z-index:10;
+  }
+  .envelope-overlay.opened .envelope-tap{opacity:0;}
+  @keyframes pulse{
+    0%,100%{opacity:0.5;}
+    50%{opacity:1;}
+  }
+
+  /* ---------- باقي أقسام الموقع الأصلي ---------- */
+  .lang-toggle{
+    position:absolute;
+    top:20px;
+    right:20px;
+    z-index:5;
+    background:#fff;
+    border:1px solid var(--gold-light);
+    border-radius:20px;
+    padding:6px 4px;
+    display:flex;
+    gap:2px;
+    font-size:11px;
+    box-shadow:0 4px 12px rgba(10,58,60,0.12);
+  }
+  body.ar .lang-toggle{right:auto;left:20px;}
+  .lang-toggle button{
+    border:none;
+    background:transparent;
+    padding:6px 12px;
+    border-radius:16px;
+    cursor:pointer;
+    font-family:'Jost',sans-serif;
+    color:#7C8B88;
+  }
+  .lang-toggle button.active{
+    background:var(--teal);
+    color:var(--cream);
+  }
+
+  .corner-art{
+    position:absolute;
+    width:150px;
+    height:150px;
+    opacity:0.85;
+    pointer-events:none;
+  }
+  .corner-art.tl{top:0;left:0;}
+  .corner-art.br{bottom:0;right:0;transform:rotate(180deg);}
+  .corner-art svg{width:100%;height:100%;}
+
+  .bismillah{
+    text-align:center;
+    padding:26px 24px 0;
+    font-family:'Aref Ruqaa',serif;
+    font-size:20px;
+    color:var(--teal-deep);
+  }
+
+  .hero{
+    position:relative;
+    padding:20px 32px 64px;
+    text-align:center;
+    background:linear-gradient(180deg, var(--teal-tint) 0%, var(--cream) 78%);
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.32em;
+    color:var(--gold);
+    margin-bottom:22px;
+    font-weight:500;
+  }
+  body.ar .eyebrow{font-family:'Cairo',sans-serif;letter-spacing:0.02em;}
+  .hero-photo{
+    width:118px;
+    height:118px;
+    border-radius:50%;
+    overflow:hidden;
+    margin:0 auto 26px;
+    border:3px solid var(--cream);
+    box-shadow:0 0 0 1.5px var(--gold-light), 0 10px 24px rgba(10,58,60,0.18);
+  }
+  .hero-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .hero-caption{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:14px;
+    color:#6E7C79;
+    margin-top:-14px;
+    margin-bottom:26px;
+  }
+  body.ar .hero-caption{font-family:'Cairo',sans-serif;font-style:normal;}
+  .names{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:500;
+    font-size:54px;
+    line-height:1.08;
+    color:var(--teal-deep);
+    margin:0;
+  }
+  body.ar .names{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:46px;}
+  .amp{
+    display:block;
+    font-style:italic;
+    color:var(--gold);
+    font-size:30px;
+    margin:6px 0;
+  }
+  body.ar .amp{font-family:'Aref Ruqaa',serif;font-style:normal;font-size:26px;}
+  .flourish{width:120px;height:auto;margin:26px auto 0;display:block;}
+  .invite-line{
+    margin-top:28px;
+    font-size:15px;
+    color:#4B5C59;
+    line-height:1.9;
+  }
+  .invite-line strong{color:var(--teal-deep);font-weight:500;}
+
+  .heartfelt{text-align:center;padding:8px 32px 48px;}
+  .heartfelt .section-title{margin-bottom:14px;}
+  .heartfelt p{font-size:14px;color:#4B5C59;line-height:1.9;max-width:360px;margin:0 auto;}
+
+  .date-band{background:var(--teal);color:var(--cream-2);text-align:center;padding:30px 24px;}
+  .date-band .day{font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.3em;color:var(--gold-light);margin-bottom:6px;}
+  body.ar .date-band .day{font-family:'Cairo',sans-serif;}
+  .date-band .full-date{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;}
+  body.ar .date-band .full-date{font-family:'Aref Ruqaa',serif;font-size:28px;}
+
+  .countdown{display:flex;justify-content:center;gap:22px;padding:36px 24px 8px;}
+  .countdown .unit{text-align:center;}
+  .countdown .num{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--teal-deep);line-height:1;}
+  body.ar .countdown .num{font-family:'Cairo',sans-serif;}
+  .countdown .lbl{font-size:10px;letter-spacing:0.18em;color:#8A9895;margin-top:8px;text-transform:uppercase;}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:var(--gold);margin:0 0 18px;}
+  body.ar .section-title{font-family:'Aref Ruqaa',serif;font-style:normal;}
+
+  .details{padding:56px 32px 40px;text-align:center;}
+  .venue-name{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--teal-deep);margin:0 0 8px;font-weight:500;}
+  body.ar .venue-name{font-family:'Aref Ruqaa',serif;}
+  .venue-sub{font-size:14px;color:#5C6C69;margin-bottom:24px;line-height:1.7;}
+  .btn{display:inline-block;padding:13px 32px;border-radius:2px;text-decoration:none;font-size:13px;letter-spacing:0.14em;border:none;cursor:pointer;font-family:'Jost',sans-serif;}
+  .btn-outline{border:1px solid var(--teal);color:var(--teal);background:transparent;}
+  .btn-solid{background:var(--teal);color:var(--cream);}
+  .divider{width:1px;height:52px;background:linear-gradient(var(--gold-light), transparent);margin:44px auto;}
+
+  .schedule{padding:8px 32px 48px;text-align:center;}
+  .timeline{max-width:280px;margin:24px auto 0;position:relative;}
+  .timeline::before{content:'';position:absolute;left:64px;top:8px;bottom:8px;width:1px;background:var(--gold-light);}
+  body.ar .timeline::before{left:auto;right:64px;}
+  .timeline-item{display:flex;align-items:center;gap:18px;position:relative;padding:14px 0;}
+  .timeline-time{width:52px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--teal-deep);flex-shrink:0;}
+  body.ar .timeline-time{font-family:'Cairo',sans-serif;text-align:left;}
+  .timeline-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex-shrink:0;position:relative;z-index:1;}
+  .timeline-label{font-size:14px;color:#4B5C59;text-align:left;}
+  body.ar .timeline-label{text-align:right;}
+
+  .calendar-section{background:var(--teal);padding:36px 32px 42px;text-align:center;}
+  .calendar-section .section-title{color:var(--gold-light);font-style:normal;font-size:12px;letter-spacing:0.32em;font-family:'Jost',sans-serif;margin-bottom:6px;}
+  .calendar-month{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--cream-2);margin-bottom:22px;}
+  body.ar .calendar-month{font-family:'Aref Ruqaa',serif;}
+  .calendar-grid{display:grid;grid-template-columns:repeat(7, 1fr);gap:6px;max-width:300px;margin:0 auto;}
+  .calendar-dow{font-size:10px;color:var(--gold-light);text-transform:uppercase;padding-bottom:8px;}
+  .calendar-day{position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--cream-2);}
+  .calendar-day.empty{visibility:hidden;}
+  .calendar-day.highlight{color:var(--teal-deep);font-weight:700;z-index:1;}
+  .calendar-day.highlight svg{position:absolute;inset:-6%;width:112%;height:112%;z-index:-1;}
+
+  .keepsake{padding:8px 32px 48px;text-align:center;}
+  .keepsake-frame{display:inline-block;background:#fff;padding:10px 10px 26px;box-shadow:0 12px 28px rgba(10,58,60,0.16);transform:rotate(-1.5deg);}
+  .keepsake-frame img{width:210px;height:270px;object-fit:cover;display:block;}
+  .keepsake-caption{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#6E7C79;margin-top:18px;}
+
+  .floral-band{display:flex;justify-content:center;padding:8px 24px 44px;}
+  .floral-band svg{width:220px;height:auto;}
+
+  .music{padding:8px 32px 48px;text-align:center;}
+
+  .rsvp-trigger{background:var(--cream-2);padding:56px 32px 60px;text-align:center;}
+  .rsvp-seal{
+    width:68px;height:68px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #C99A3E, var(--gold) 55%, #8f6c1f 100%);
+    margin:0 auto 14px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 18px rgba(10,58,60,0.25);cursor:pointer;border:none;
+  }
+  .rsvp-seal span{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--cream);font-size:22px;}
+
+  .rsvp-modal-backdrop{
+    position:fixed;inset:0;background:rgba(10,40,42,0.55);z-index:50;
+    display:flex;align-items:center;justify-content:center;padding:24px;
+    opacity:0;visibility:hidden;transition:opacity 0.3s ease;
+  }
+  .rsvp-modal-backdrop.show{opacity:1;visibility:visible;}
+  .rsvp-modal{background:var(--cream);max-width:340px;width:100%;padding:36px 28px;position:relative;border-radius:4px;text-align:center;}
+  .rsvp-modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:#8A9895;cursor:pointer;}
+  .rsvp-form{display:flex;flex-direction:column;gap:14px;}
+  .rsvp-form input, .rsvp-form select{font-family:'Jost',sans-serif;font-size:14px;padding:13px 16px;border:1px solid #CBD6D3;background:#fff;width:100%;border-radius:2px;outline:none;}
+  body.ar .rsvp-form input, body.ar .rsvp-form select{text-align:right;}
+
+  .closing{text-align:center;padding:20px 32px 56px;}
+  .closing-line{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:#4B5C59;margin-bottom:10px;}
+  .closing-names{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--teal-deep);}
+  body.ar .closing-names{font-family:'Aref Ruqaa',serif;}
+
+  footer{text-align:center;padding:34px 24px 44px;font-size:11px;letter-spacing:0.18em;color:#9CA8A5;}
+</style>
+</head>
+<body id="body-root" class="no-scroll">
+
+<!-- ==================== الدخلة السينمائية المطابقة للفيديو ==================== -->
+<div class="envelope-overlay" id="envelope-overlay">
+  <div class="envelope-wrap">
+    <div class="envelope-box">
+      
+      <!-- كارت الدعوة الكريمي الداخلي -->
+      <div class="intro-card" aria-hidden="true">
+        <div class="intro-card-ornament">A&amp;R</div>
+        <div class="intro-card-kicker">THE WEDDING CELEBRATION</div>
+        <div class="intro-card-names">Ahmed &amp; Rawan</div>
+        <div class="intro-card-amp">&amp;</div>
+        <div class="intro-card-date">24 · NOVEMBER · 2026</div>
+      </div>
+
+      <!-- أجزاء الظرف الأربعة الكريمية الموشاة -->
+      <div class="envelope-panel panel-top">
+        <svg viewBox="0 0 200 356" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="200" height="356" fill="#FAF4EA"/>
+          <path d="M0 0 L100 178 L200 0" stroke="#D9BB6B" stroke-width="1" fill="none"/>
+          <path d="M0 356 L100 178" stroke="#D9BB6B" stroke-width="1" fill="none"/>
+          <path d="M200 356 L100 178" stroke="#D9BB6B" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+      <div class="envelope-panel panel-right">
+        <svg viewBox="0 0 200 356" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="200" height="356" fill="#F1E9D8"/>
+          <path d="M0 0 L100 178 L200 0" stroke="#D9BB6B" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+      <div class="envelope-panel panel-bottom">
+        <svg viewBox="0 0 200 356" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="200" height="356" fill="#FAF4EA"/>
+          <path d="M0 0 L100 178 L200 0" stroke="#D9BB6B" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+      <div class="envelope-panel panel-left">
+        <svg viewBox="0 0 200 356" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="200" height="356" fill="#F1E9D8"/>
+          <path d="M0 0 L100 178 L200 0" stroke="#D9BB6B" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- ختم الشمع الذهبي القابل للضغط -->
+      <button type="button" class="envelope-seal" id="envelope-seal" aria-label="Open invitation">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sealGrad" cx="35%" cy="30%" r="75%">
+              <stop offset="0%" stop-color="#C99A3E"/>
+              <stop offset="55%" stop-color="#B8912F"/>
+              <stop offset="100%" stop-color="#7f5f1c"/>
+            </radialGradient>
+          </defs>
+          <circle cx="50" cy="50" r="47" fill="url(#sealGrad)"/>
+          <text x="50" y="59" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-style="italic" font-weight="600" font-size="26" fill="#FAF4EA">A&amp;R</text>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+  <div class="envelope-tap">TAP THE SEAL TO OPEN</div>
+</div>
+<!-- ====================================================================== -->
+
+<div class="page">
+  <div class="lang-toggle">
+    <button type="button" id="btn-en" class="active">EN</button>
+    <button type="button" id="btn-ar">AR</button>
+  </div>
+
+  <div class="corner-art tl">
+    <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 78 C 42 74, 66 50, 70 6" stroke="#0E4F52" stroke-width="1" opacity="0.55"/>
+      <path d="M3 48 C 30 45, 42 32, 44 4" stroke="#B8912F" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="corner-art br">
+    <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 78 C 42 74, 66 50, 70 6" stroke="#0E4F52" stroke-width="1" opacity="0.55"/>
+      <path d="M3 48 C 30 45, 42 32, 44 4" stroke="#B8912F" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+
+  <section class="hero">
+    <div class="eyebrow" data-en="TOGETHER WITH THEIR FAMILIES" data-ar="بمشاركة الأسرتين الكريمتين">TOGETHER WITH THEIR FAMILIES</div>
+    <div class="hero-photo"><img src="data:image/jpeg;base64,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" alt="Ahmed and Rawan as children"></div>
+    <div class="hero-caption" data-en="friends since we were this small" data-ar="أصدقاء من زمان... من كنا صغيّرين كده">friends since we were this small</div>
+    <h1 class="names">
+      <span data-en="Ahmed Shafieek" data-ar="أحمد شفيق">Ahmed Shafieek</span>
+      <span class="amp">&amp;</span>
+      <span data-en="Rawan Reda" data-ar="روان رضا">Rawan Reda</span>
+    </h1>
+    <svg class="flourish" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 16 C 26 6, 34 26, 50 15" stroke="#B8912F" stroke-width="1"/>
+      <path d="M116 16 C 94 6, 86 26, 70 15" stroke="#B8912F" stroke-width="1"/>
+    </svg>
+    <p class="invite-line" data-en-html="Request the honor of your presence<br>as we begin our life together<br><strong>Tuesday, November 24, 2026</strong>" data-ar-html="يتشرفان بدعوتكم لحضور حفل زفافهما<br><strong>الثلاثاء ٢٤ نوفمبر ٢٠٢٦</strong>">
+       Request the honor of your presence<br>as we begin our life together<br><strong>Tuesday, November 24, 2026</strong>
+    </p>
+  </section>
+
+  <div class="heartfelt">
+    <div class="section-title" data-en="Two hearts, one destiny" data-ar="قلبان ومصير واحد">Two hearts, one destiny</div>
+    <p data-en-html="Dear family and friends, join us for an evening of joy, laughter, and blessings as we begin our forever." data-ar-html="أعزاءنا الأهل والأصدقاء، انضموا إلينا في أمسية مليئة بالفرح والدعاء ونحن نبدأ حياتنا معًا.">Dear family and friends, join us for an evening of joy, laughter, and blessings as we begin our forever.</p>
+  </div>
+
+  <div class="date-band">
+    <div class="day" data-en="TUESDAY" data-ar="الثلاثاء">TUESDAY</div>
+    <div class="full-date" data-en="24 &middot; November &middot; 2026" data-ar="٢٤ &middot; نوفمبر &middot; ٢٠٢٦">24 &middot; November &middot; 2026</div>
+  </div>
+
+  <div class="countdown" id="countdown">
+    <div class="unit"><div class="num" id="cd-days">--</div><div class="lbl" data-en="Days" data-ar="أيام">Days</div></div>
+    <div class="unit"><div class="num" id="cd-hours">--</div><div class="lbl" data-en="Hours" data-ar="ساعات">Hours</div></div>
+    <div class="unit"><div class="num" id="cd-mins">--</div><div class="lbl" data-en="Mins" data-ar="دقايق">Mins</div></div>
+    <div class="unit"><div class="num" id="cd-secs">--</div><div class="lbl" data-en="Secs" data-ar="ثواني">Secs</div></div>
+  </div>
+
+  <div class="schedule">
+    <div class="section-title" data-en="Schedule of Events" data-ar="جدول المواعيد">Schedule of Events</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">9:00</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-label" data-en="Guest Arrival" data-ar="وصول الضيوف">Guest Arrival</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">10:00</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-label" data-en="Zaffa &amp; Celebration" data-ar="الزفة والاحتفال">Zaffa &amp; Celebration</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calendar-section">
+    <div class="section-title" data-en="Mark Your Calendar" data-ar="علّموا التقويم">Mark Your Calendar</div>
+    <div class="calendar-month" data-en="November 2026" data-ar="نوفمبر ٢٠٢٦">November 2026</div>
+    <div class="calendar-grid">
+      <div class="calendar-dow" data-en="Sun" data-ar="أحد">Sun</div>
+      <div class="calendar-dow" data-en="Mon" data-ar="اثنين">Mon</div>
+      <div class="calendar-dow" data-en="Tue" data-ar="ثلاثاء">Tue</div>
+      <div class="calendar-dow" data-en="Wed" data-ar="أربع">Wed</div>
+      <div class="calendar-dow" data-en="Thu" data-ar="خميس">Thu</div>
+      <div class="calendar-dow" data-en="Fri" data-ar="جمعة">Fri</div>
+      <div class="calendar-dow" data-en="Sat" data-ar="سبت">Sat</div>
+      <div class="calendar-day"><span>1</span></div><div class="calendar-day"><span>2</span></div><div class="calendar-day"><span>3</span></div><div class="calendar-day"><span>4</span></div><div class="calendar-day"><span>5</span></div><div class="calendar-day"><span>6</span></div><div class="calendar-day"><span>7</span></div>
+      <div class="calendar-day"><span>8</span></div><div class="calendar-day"><span>9</span></div><div class="calendar-day"><span>10</span></div><div class="calendar-day"><span>11</span></div><div class="calendar-day"><span>12</span></div><div class="calendar-day"><span>13</span></div><div class="calendar-day"><span>14</span></div>
+      <div class="calendar-day"><span>15</span></div><div class="calendar-day"><span>16</span></div><div class="calendar-day"><span>17</span></div><div class="calendar-day"><span>18</span></div><div class="calendar-day"><span>19</span></div><div class="calendar-day"><span>20</span></div><div class="calendar-day"><span>21</span></div>
+      <div class="calendar-day"><span>22</span></div><div class="calendar-day"><span>23</span></div>
+      <div class="calendar-day highlight">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#F1E9D8"/></svg>
+        <span>24</span>
+      </div>
+      <div class="calendar-day"><span>25</span></div><div class="calendar-day"><span>26</span></div><div class="calendar-day"><span>27</span></div><div class="calendar-day"><span>28</span></div><div class="calendar-day"><span>29</span></div><div class="calendar-day"><span>30</span></div>
+    </div>
+  </div>
+
+  <section class="details">
+    <div class="section-title" data-en="Where to celebrate" data-ar="مكان الاحتفال">Where to celebrate</div>
+    <div class="venue-name" data-en="El Fayroz Hall" data-ar="قاعة الفيروز">El Fayroz Hall</div>
+    <div class="venue-sub" data-en-html="Doors open 9:00 PM<br>Kindly arrive 30 minutes early" data-ar-html="الحفل يبدأ الساعة ٩ مساءً<br>يرجى الحضور قبل الموعد بنص ساعة">Doors open 9:00 PM<br>Kindly arrive 30 minutes early</div>
+    <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=31.0153408,31.4979267" target="_blank" rel="noopener" data-en="GET DIRECTIONS" data-ar="اتجاهات الوصول">GET DIRECTIONS</a>
+  </section>
+
+  <div class="keepsake">
+    <div class="keepsake-frame">
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAI1AhIDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAAAAECAwQFBgcICf/EAFAQAAEDAgQCBgYHBAgEAwgDAAEAAgMEEQUSITEGQQcTIlFhcRQyM3KBoQgjQlKRscEVNGLRJHOCkqKys+EWwvDxJUR1JzdDU1RVdJNjZdL/xAAbAQEBAQEBAQEBAAAAAAAAAAAAAQIEAwUGB//EACgRAQACAgICAQQCAgMAAAAAAAABAgMREiEEMUETIjJRYXEFQgaB4f/aAAwDAQACEQMRAD8A9SoQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQhAIQoJKqJmgOY+CCdCournfZYB5lNFbJ91n4KbXTIIWP9Nk+638EemyfdZ+CbNMghY/02S/qsQK2S3qs/BNmmQQqBrZrO5iPTZO5n4Js0voVD02T7rEemyfdZ+CbNL6FQGrpG5iT02T7rE2aXkKh6ZJ91iX0yT7rE2aXkKj6ZJ3MSemSfdYmzS+hUPTZO5iPTJLeqxNml9Co+mSdzPwSemy/dZ+CbNL6FQ9Mk7mfgl9Mk+6xNml5Coemyfdb+CPTJPus/BNml9CoemydzEemyfdYmzS+hUPTZPus/BArJPusTZpfQqPpkn3WJPTH9zE2aX0Kj6ZJ3MR6Y/uYmzS8hUhVv7mo9Lk7mps0uoVH0yS+zEoqn9zVOUHFdQqZqn22amurJA0kBivKDivIWG/ak2a2WO3kf5qdlfK4+qx8FOULxlkkKoKl/c1HpL+5qu00toVUVLuYCeyoafWBCu4NJ0IBBAINwhECEIQCEIQCEIQCEIQCEIQCEIQCEIQCEIQCR7wxpc42ASrHVsueQtB7LfzSZIg2oqHSmw0Z3KC6ELDYShAQgROHJIlCIQoS80hVAgICEClIShHJQASpCgFAvNCLpLoFukSc0pQF0oSWQgdyKRIl5IoCCkui6gVF0g8EWVAhKhEIhBQECosk5pyABQN0iUIFSpEIpvNSBMG6eFlSelZSkaacY3aKTVqWp603Rtw+V1qV8p6OcaX/0o1Tj72l6T2Fp9L4kXp63mpt4gH3X32A8e9V6fEafF6qSvp8rBld0Y2BvbtA13C3vEcfj8L43RzPZ4cldD6Q+JsMwnBqDC8EqaWbELiT0k1PMxxZEw9m1x2vbtbb6S27Kvh/i6XwpxvT8WY9TVeD4Z/zFhFLLm66Y5j2pXANsNdtN78rbl6s6Tsc8McaYjIeHOIMHxmJgD3to6pkkrAdfaY3vHmuD4r0uUWOcT8PcdYhglVhs2I0VRgldTzPD5mXzOje1zQG3Z2xvt+K/Jj9u2pP3L1D4bwev6SMXxTG+McfxOsw/F6qKkq4KmV7Yj9W07MY4M0YGi6LgLC8f4V6VcEwvB6vHqnBK2nnbU0ddM57RII8pjy3Fja8m3iF1PDenrG8LxLD/AGjX4lT1OH0dPT5aVzmST9XGGBzt9dyN12LhHjaj4s4hwLFMb/amJ12JTy1sWbO1kfVi3V20A2WvHxtLnzx+r2RwnjXjL7b6vE6nF6vEpqyZ8ss00rnPe8ncknldbT6OOGK2pxzGcQqabMY6OOnbIe4ve+wt+C2LpYxvG8M4mxLDcPq6qKgp3xsx2jppc0VTHtc458utw+Wq6j9HWP1ON4fjGKYo98tdV1Mj5pHm73uLruJO/5rrz5+Tj6e/XyvjxYub6V+W28Z1Fdh/Rdx3i+H1csFfTUIa2WN+VzHOqGtdY+YJXmvBuH6jHOJ+HcOxd09dJU1zIal7i8zSDa+o7wt4/SDxpU0+H0/CWFvP7Y4lKKeJjB3nNDjbb7rfzW19G3D/wBjuBuHsKkiNPW1EctfU5u5lE9+v4Na1cbj48eT6l3vJzZcPD/Zz4q4/wCDuG+JsVw2swyvjko6iSF8r6u2YuFr9y+b+Jq2oxPiLiCtoojFS1NVLLIwPzsZf7rb6gXX1H6WOEcPx/gfG8UkgZJWYfSST0kx1LJW2tf8ADsvmt7y97nPPvc43K6cftjP6vO/qcvp25hU1M0VPTxPeGRsBYwX5Akk/Eq02p57bBWe8lW94rT2x1Z6e9/vK50uuvxWW6z1Y8964P9I1mU8A0j7956zJ/2b1vF+9ZPo7jL+CqJ1vtSPB++VfN/H9P93k4y5L6fW7D3dZ1xvfksl5qFw7yvS47h66vKqgN4O07KxMbyHcrH09nF3gsfUu1Nlj2v09y7cPHvVw+XyMbe/Cg7vA3XG8d1M/L65e2q+7VbLxaO0LqnxdiE+F4Di1VQyGOqo4Xzwyc3yMbcN28wtHqW01VwP0Xw02HVEuMYriT5Wxxu7crg+R47+3YFfTniTBMV4F6PcEwuqq/R5565k0+UtLmg0zy8tbfNcf8As8cK4lU1FX6ZhNLV1s2aaVtPEJZHNta7ttdw2UfF0tS7iTiDFK2vldLV1NTLNI8/cuJuT8l6fXW3Pz358V0+z4p31VfNK95c+SRznOJ7yblfSOiWvpJ6X6j1mCkpZ5X37L8t3N/uC877r279HXCkOO4TjWNVFMXVFLUMhp5Nu08A3Zfub2911uX7YxKefB+U58u7v1V4pBXVj6j0eCOmkeXRwtc9zWNvZos4uNm2tcrC1j+09z9Vp/SLh+N4fh0OO8N4g+mpaaZtPVUztjKx/7QJ2sTcfe71t3BOKx4pw1hWIxy9ZPWUkb5L37Muxc38CuyvG+PNv6+bK+PJxjX9J1dJ4ZqHScP8LYpI68sVRK6197Pkc1uf8AnuvK047R1vuvV/oVxd2L8IUNFUT+tX4S+ajkLjvGHPzxf5X+a5v5eN66eXhy+L36fW26Pcfc0kX1R65917n59iTfVK5T3sbfM2W9bld29f1R3VwYlW02VwllYHOa27XEAWuvNnB01LDi0NViVP11NBO0yxW/ej9puzvkvsn6U3/wD2Lg3+8//ADhefH9N8P8AL6eX+X5fWfE3HWF12k1a0W2aGgfmvPvEvFOJcQ1fX10r4IGvLqaijeyKOIHc91+9aO52t1D3v5uN14+S5+v028f8nF3n65JheI1mB4nRYhRTvhrap4fFNG/I+NzTYtcD62q+j8H/SAw/E6eKjxtrMIxjT0qVrnGmdv7TP/ANq/O+75rjT6g3Oq8z4vyuX11n3+fT1F+krh8z2x4jhM0MTjfPBIJTH55TY7eCxfEP0lcM8S4JgtTDXspMWxKpjp5qGfSRA8g6M+GZtyN72vsvlZlQ4aDVV8sPZ1WfyeXy97OnycuO+v2/d6T6e6eKnh4nwR13U0mY1sbeWSRx9Zv/AL1/grvSFwvgtDxfwvguB4c/E6TFg6oqK15c+WSZz2hzm7bZRYFfK8VXNFrOdbzWaPJm8u705cfk7x2+rOJuh3iTC8PrKmhr8RxKlp/3jKWkp2mWRo52aHj+a8tS27R0b5J3VbB8axLCq+nrMPrqmgroXbslhldHIf8A3dSuv8Z9JOKcR8K0GA1jHQVNJIG1k7T2qmNo0Z7uXwFvNdfLyY7Y204s+DL48m6321SkmL6uOndVucW65/1V04t723t7vdfP9m3+qj3v5r2HjWj4x4ZwviT7NqcKxqjpMXoHtb9TWR9oMv3O2Oa4t27N2V+VpZqXvNnE31PcqZfd58yt6xSkoqWlBw2tM1W46hze61n43/Be8/pP8N1mI8N/ZfD9M0ztlFXDGy+Z7h/cIH3Rdb6f5fL9X+Xn/AC+Hj/b7n/Sj4XlY2hxHCW2mhdZtYxu8b/tX/Bw/BfJ4fv5r6t/Rz4gZiuEVXCtY5pvSS1NAG7iWNzPb8Xj8l4h+kLwtOwfGOIW7MFS819B+7lF3x/G7V39ovn+X5b2n29L4P8Aj09S6U4c03N/NZqKsew2N0lH4t40wfAMFnxLEq+nhp4Y3u2kBe8je0bd7vyCvP06Z1FvFk7rW10r7lVp6VzjYt0v1pX6vN/wD6Xqfh7hfE58C4Xp8aouoqjC6WppwY7lra91zN73V9vGZ47vBfA+K8SYpgmHYeK2Wgw+aogbK1pEshlFrh5Ntwuu7cZcM8SYThGAVON0JocPqqGnrIatrz1clpTmbc/Z7OvuuvNXBvHWMeGeIKbEcLrv6J0oia4a+kRH6uVvf4r6nxbj/E/tZgmCY3T/0vA8Uw2l9KoK+Jpe6Bzm55YZwNY3B1hZ3w3suXk45+W/06fP482PNu/b/ALV43Y/PqV92o0U5aA0NsbC+q86Z3/a+f+7Y+h3hU2I8f4tM9ufp6+euf5tjd1YHxuV89k31K98fRqwJ1LgvH8de3KajEqaibv4xR9q//aV8i7bJ5eV2xXp4eLLbKqR61tU86u66jcfiR9YV9N8DkYVhtB2coyxxO27t26+a8v4rWzN9WcR4r0j9JGH9G2Acd4hE5uV+ISf813aZmyyZ2W836v7zSvls2uXb9/wAvdf0uUuJ03+B+Bq102V9Xh9RSm+92yZmsPvNHzXyMbuV9X/S2D2fBPh5g1xQvmd8M7w/4l8q7bpprW6vJz771+nrf8ASbwmWnwDhKqdGR1dfUQNPwETn/mLw1l7x+lXxBLW8S4XglNO51HhFF18ze4SzyD2vf6o/NeDf/wCu/wBvFj2+t9E+jnB4sV6P/qJmNe6k6uZp00lY5rnfBwWpcSYZLiOC4pg8sTYp56Opomw9oWb2mZcgv2TpfwW9fQ9xBlxrhbEY33Y+nqaeofG+2vVuc8j/vAheZeKOJsdqcYqaeTE62Wlqa6SaeB1Q9zJXl4IL2k5XEX9q3gvL8fF8u7p5ufzcvHjr9tZxvB8Vwqupquvj9Dknd9Uxzmuub65W7hd2fT5L1nx3wvi2AcdUeJ4jTPioMTpqh1FVPbZso6p9xnf9h+tivIe2trX2W+Xm/u4vHj+6w1N7xWwV0v8AyX0J9HrA/wA39FOKYxKzrWUMEtV/w0+Rn+a899FfCv2z40wTCpGZqZ83WTttckQtzOB8iO2y+uMUxrBeF+EhiVXUww0tJRy0NL9U+1u1E2VzGtt+04K/n+Tf08vPy/2x8fG3t524u41pcZwvBcKpqcUlBRwMnlP3pZ3sbv8A5Qu6/S5xmHEOJMLwsSmR9NRmqkgfdpa6V9mPB8Qy+gXz1jdU+pqnVEhBdM4yOPfckrZ+PeK28TY1S1bKfxFPT0jIWxPfqXguL3cvvH8l57y+XNzy7vR4+XHHjq6L6NcPZwjwjxZxW+BpfhlN6JC8aFznZbfi4L4023uX2H6SNTBjfBfGeEUjm11VQ4rSTzN2c1kdQyPtd88gXy/m/LwXX4sZxz5N6s2+v1a5n7Oq230bYRHjHG2CYbNGZaeSpbJV23EbLvd8rNBXHvfv8AvtXrv6OPC4wjgfH+KKpjr6+WChhkP1WjHSEftOb8l2eTOsNvN5vH483HtfP3pQYQzibG6PCaVsNLBUyRwxt4Na06IXFtfqvn9/f/ALqvdfN5u229fTxceOvW9z4m17Kz0Oa9k4lA016x4L1f8AR/wSjh9BgeDV1I2pqq+gZV17pHZsz3i7WAfvFhA2sV8g6/j2X1Z9HDhz24NjuPVVN109VVD0GZ2uyxpYQ4fB4b+a8rx8dv6t3X5eTG8eT8bS+LuiWvpJ6SOGK2pjZ6KavjqZHNbtb1b87v+R1K7f9KTiqWipMMwSjmNnVbq2qjDvVazssJ+DnuXp2r08b51LsvSbw/w78Lw/E5aBsdRjFW2Xq33kEcdg1o7tv+S0H9j6V8508/LzM636/H4/Hh5/u8L281HtfVd2b381Ebn5rrPLl5eWp816h6GuFaXEcQxviCvpXzOwaB9JStYQ8yy3D2/gxtr815rL7bL6v+i/geEYfwb+1JqcGvxaoNTO957bpC4tbH/ALNuVw79V5Py8uOHu+nn5eXj5f71z1/TniPEmFzU2DY3iNBT9QyX1SlqJImZmu7O2QOztuuq0HRPxXN+8qqGjZ4y1bbf8i3b0i9I2LcbccT0WKz4jQ4bhsjqWnwukfJFTvga8iORzWOaHOds51tt2ldL4c6b8Y4fwiXD5aTCMQw2oqjVzw4iypPWSG2ZxcxzXZraZbaLhw4uPNb7fV1+XfHjj8vGzH2G7n/wA2U18kLrY647z73b8V7r4n4r6J+P4oX8WYhhWDY0yNtPUVcVDW0ks0Y/dG7pA1wI7wL2Wv8AHf0c6WTDZ+IeC8XwupwWjjnr6mmvTQwQxR5pZXtkaJW2aLnM48l9K9fPv8fT50eS+k0/wAvK9l4c0uD8RY9TUslRh9DUSxO2fHG4tK3jhfD8YxXFYaeiwrEK9z5wHU9PRyzb339Sxzr271u/ox4WbjePY3xFV05qG0tYyloIXMvESXtc4i+hPZ233X01hVNDSUUNJSQRw08EYjiijaGsY0CwaAOQSvH4sfG429/b6fNnx+Pl+1LzHj/Q9j8tLWV2IYphuHVdPRTTr0cT6mVjwwvAa2a7SdNvkuJ0PBLz/wA0/MlfV3TdwfhfGuAMrscwqKsp6jEN0ssb2yR6XyvY4EOA2uD/kuO8a/RoxrhSrq6zB6WoxTCA4zUs0bGvnhZfeOSwF9tzmF/J6fN6fP6evH5PG8dvt5Y9m3j9p31UjH6rM6V49T9S3aD5p7m30Xf/W15MvP8nLp66l+75f6lT80+q854aXQ97r3b8llqN6Y2Nttj9U2U7SskJt5o6aN0k0sbI2MBe573ADL+0V6c6EuDMNosDq+I62jhqa2sqjTULpozcQRgZiwHk5+bX+yz8Vw+Xw24Pfy+bFnjr9vC1bhPFsRp6eqpcMrp6eo/eRTRwnLJyNtu0fBXcawTF8Grn0mI4fW0kwNmvngcGn4Otb8ivrrHcQqqnDsMwqjoIKjDJK+GeqkdG10lO0Zsz45N9j3bW/Bc9xvhLhXiWpZ864VgeJTRZ9TSRGKRz9Gtd6q7c+f5b8vHh/t5TzPjX6e9Jxfj+L19Yyk/pFTVU8rZq31d5kdJJls2W3aebcvgtUxd0+JYlUvkaA50rzZjfZbc327u9eoOHv/8AeE+Bv2fR7//AFq/E/Av0eMZwvGquuw+pw7GsVqIal2IVcM1O2J7L2jZGxjm2N2/a33vuvfHxfz64/Xj5MvP68uMeb8M9HPEmLz0dLR4VV/0mN00cj9W0xvczXqnvtbL5r99/wB66dwnwdxBxViBocMw2VzY2mSeoqe3FBH8Xu/52W68Scf8HYjguJYJwxDhdJ+0GtdUYniFR1k0dOHZmxsayZrW5suhDtyu48K4rjHDPD9Tj3COLYXitXhFJTz4jhdW+rE8T2ue6eIuZG2Q5uQ53j4r+r8/wD26d+P7uL8vP6tvK642/r3J6uRre6P3l+K0qrqY3wMniL3QSOa8te2zmtJsdO5bc6wX2z56eF7uTHeZ6pWlXm8yYl9fOQ0aZlE+4sVpU0yN7lqU0rYtE63r71R0lq6+3cpoJ2P2+qf1K3vjSopBhdA9l3dZWNztHez2SvL8FkFRxHhf7S61vV31GzQ/wCV2v8ANer8Wf8Ar2/J/wA79eL0kIQr19a4QhCAQhCAQhCAQhCAQhCAQhCAQhCDH45/sTf6r/IrmdZ90LpHFv9jb/WfyK5oVn2pWvK/0o9v2ewA7/t8X+jkvJ/e5eqvpbP+zXAev/x8f/pHLyc1o11R4+z+4a1Nqbr2R1a34rV8dZ0d8Yj0eJ+w1sYlqYqSnpq2SWuop39W2pjA/eMHecT4Bdp4l4m4TwDhLCquhwfDcb4nx6nrJm1OIwiWkoKdoGRjIj6rnk7tPcuG8K8TcU8P8f4LjWD0M1dPhlVHPJU2/5iA3D4neBY4tI5ELX+IOMuLuM8bkw3GcSrKnDaaofNPhUTWxxvc6QyP2bs2M94W/G2zHLP1M9t+kziLjfhLhvhDiDhiKjpsWxujdXYrLTu3o6Rk80cMZ/hY8eS0ngfhjC+MeI8Sw6oqamngpMErauJ8Lmgullja0tN3ePmvT/wBKbEMKxrhbCMfwPEoKuWhq5MLvE2zpaV4MjT9zi8C53uvO/B2JTYVwnj1dh076TEK2mp5qeoj0fGwSNa8b89Sqb/wB9v1a16eGz436h1PBs2G4HguNUVfUXx2pnp6uB5bp1Tm2aRbt+l9V3zg7h3B+EOK5sE4nxd2K1s+H01ZhdR6rE9sUzXucHh3rPII0uV58wvEeLsaxH9u4niNXVz4lV0jq+uqZnnqpHC9s7z3khepeCeIuM8W4fwfHMUr6nEcOwqgqYp8WquqyYnV7hEwSHs5mNAzE68uauq1v05/L4+O8R+3o/E8UrcL4f4g/Z2D09bhldNFSV0FTVvY9szXN6t8TGj7J53N/wA140xvH+JuJsSoMTr56mvfhmHsgoKZsjo44482o07X3W4cV8e8f8R02KcP4ji9bU4fXVTJKun1zvewgtf2vW7PivPjQ5ti11vB07vFej4uOOu/59/j/AGu4cPcU8a43x1hOG8Q1VXiuD1dfHFJTzO7TR32c3t7xdfVOAYfT0tN9jUFOyrxHE69lRXvpvZ1HTscHPMvgtv4q84cKcbcTcKTVs2A4pUw/0p+d9O2Z5jL3c8uoN12fhviXjWvw+bHMNx6qkxGqo4/3sU1Q50UbdA8ZCdH76W3vuvG8nFkv2/wDq+rxcmLH833/2tq6dMUfhXCLsbwl0s0mJVtNSzPpu09sDHa2v3XG+61fhjjDhfiXiDhvh3A8KpaTFsfq+tmqJ9vQIW+tkefNxyNvfVcn434845xLCpcPx/F6uuoJJ2yPjc8gEtsL20WscGYlV4Zi1DiNJWOp6mkkbPHURjO2NwOuoXp8fjk5eO/Tz5fJjjxyy9/q+qMd4p4H6GccqMBwfhcY7XUdF100k08p7MgvcuNrH481zHCcWwuTw3W4fV0NRW4liVbFSvqy8iOKjd+8Zp957suy5JxnifFuJsYnxjE8RrarEJiC6o7eR5IGgv2tT+a2ThTi7FMRwt+EYzhlLhGE4fh72Y1iNbF1bZmuADX7u2bn/5W5v9vHfP0rT4Jj+L6d8v1b5wHh1PiPH+D02JTtoqfE6iSKplhGjY9cufb9q/ktm4t474bwnF6vA5sIxXEo6aRkUNRXTGohqIx2muD8p327O71vFcXj9XU01Y2tp6uomqpC576qSRz5HDvLnuuvtfL21vuvN5vHy2xrJ6fF5MXF8xM9d+o+PuJqTFJMVwPCqfEcNw+u/pUUtYx4p6l+8c27g3f7rh/NX8bxvhTiaWnx3F8GqqbEqmJxrKEbUNXU/3wNwxvO5a7y71xRrj+8uPevm+Xybf86+vj8uON63v1sOJ4hh09NT0uGYP1EkUjqurqauZz3yvIsBYu2aP4qRviN8c/XVmG0FRX0uHQ1tLSTaumppXtc4P07N25D/AFXE5XuuD+0V2Oq/vLv1256vV1q8V4s9cQ+y3Y1Q6PZ6aSlqA595L1L2vbu932bA/BY2fF558Pp8PhjjoMPlmqX0tK2V8T5z23uEj3MBNjsGryIHF42L3X71zuvb3c+XNn9vT9r95t+8oJqM80B8b4+r6Z8D35iHtbI3MO/8ALde2vo/dJmLcHw8X0eLUsdFSUMrqrE6Goez0WJrdA+J5dpIHO37y+J773Xrf6JvSHwzwXgVbQ4rXzUFdicrW1dbA3O2kiZq0u7/AC8V4XzOPJy8e/T6n4uXHXk6fVb37Qd/r1eG/YV3v6Z3HlDhvSrgPDOGYjB5LpZq+uqoX2L9HuiYD45ZpCP5rjPDfHXH+B47W4jgeI1uI0tXWyTOq6iZ8kFQ8vNnuYXXaHfFaJjeJYli2I1OIYnXT1lZUvMlRPPIXPe4nUkkrzZ8U5f09fH5OPFv012XnPhThDhvH+GMaqsfvDi1NUzSUL46iZk0TW5i2VrXhr2uv3rjequh+V58+Plx9vTjy4764/uvbHC3FfAWD8P1uL43hdRVYjgU1W6noJKV0kNZVvGdk8jXONmRzXf42svJ3v96jmu29z/wBVSN2Y1t16eHy+TPTzfM5MWbWd/qvTfRHjHDuMOPcPZjeFwYjiFDE5+GYlUSubUULI2Z45Hta4Bw7X9y8uG8qEuuB2tyuq+Xl1jXz258uPffL39xv0z8Ecf4pDiXEtLjtHX07czpMKrbx1B/tfZcz5E2714P474vpecYxjFa2jkoYKqrdJDSzPzvYwfZaXeF18UpeS4v2XreXybY49vPy+XPk6/wBq/CuvcHYzh+CcT4biuJ0P9Lp6aXNLTuD272fsu0K4P1XvL773T8t7Z2n293Vv0icHcc78Q1uAYniOKyUcbqylwimfT1FRG1ubL6a8te5vmuR/SsxvCsa4gwWqwqu9Io/s8Uzr00rJmxyuf6zHOY4jdbL6BeMcCwnEcdwrEceZhdVi1O30Csnd1UEUw/dvc4/aZq31l4yudqXrv8dcf49z48vF5cfb079JPpBYbwnwfU0OMYv0NXhlRJiFGz0aR5rWlrmN2aQWu11XnPiTjDHvEuLzvz6Zp7uC593lTj+S8eX60+nj4uPHG/u776LOMcGwnjHFjxFxS44/hE7Y66iqY5Y3zRzN2P1cjnNHYc1x2h32uuby5XU0+Z8bL3u95+a5fLz5M3Z6uPzZccdm+z0Twt0t8EcNYhhUuPYbU1WNYhSw1mIYzT0skjaqB/wDWQytd6zHn33+K8k8VY5T4rxHiuJ0tK2lo6urmqqSFsZjwjdICwBu5+zZc268p7l3vJ4eXll7uXL8vPj2z6e7uiPjPhzhnhTi/DuJa10mJZhh00OG4dTCU1Esz4nNEeQNsAWt3nZeM5SXtN+0pt37uWv1Vp+Hlx8v1efk5cvL7vpvpQ4wwvEui/AeHaPF6KvqqXEKuaqoYalr5Yw8v0ey4u30XyS8O7b+K47t7p0h815ufzcfk9fDx48fv7q65H1XmQ+ZSTuXN69b6jG91K55qA8l3+K07uO5ZqVzn2Y0lUe5znnM4uJJJ1uvXl9s66+f3ZztCgJc1MhY97srae57vBoXo7gz6M3HPEuCwx1WDV+FUkkfaNXiNOZae3k9l2258l2R2rPq4rJ3UroO5e1ePfRnxzwrQvqa/CP2rRxNzb1bT8+NtvNjszR8bLxg2+b99k+S4Z+Xkx/y9nHy48v6ZcQpLqXp57d6t4e0SVcTS7KAXbnkFz6VpW5aNwf6NOOuL8PpKmlwWvpMGnfnkxeoYI6bI1wDrX3s7sXW8fow0uD43iVDxHxdheE4rQSsE1B6NJWfsm/Y7B7O29ivmB+863W+cTcUY1w5R0GE49S4hTU1W6OmpqmljmdAxtw1t2nbyW8vFnn2Y64ceXHH+r3/h/hzCPTO2pw7HhjfC2JU0dRS4w8Q1jYnROa5kUbZHOc027+9eacZ4EwbjXjWfEeEOMsEw3DMSdTUlfT4k6onjljb6shgYzdzpD2d+SuW8ScT8R45j1LjVZi1fPX0bmvppZJXbFhu0N7wBdZdU8Q4s6qqarEa2qe2VsjHSuLtHbrzcvj5bZ+nVy8vHH+r7XhuG4X0V4vT4pw/wD0rB66n6qoo63EpKWRkgB2bB/6lufEHFfBnFuMYrVw8Tz4Tj2I4fT0mGUzMNkjZNTx9Xmld6v7M2uV8r6q43VunquWqV1fV11W6pq6qWpndYulexr3fFX4+fPyf0xZeXHj9tfS/wBi0eGcX8QYThk0c9Hh9fNSxTxy7PYx5bdt/ELe8E4g4awbiWkxfC+I8WxTC7udU4ZXUklO4PLTZpe72jvv2r5u77fXvUr79y7L4Z//AJvPnx/4/d9s8ccRYTxfiO8XN/xXpPgbH+E+GuFuIcExXi2XCsTx2gp/SqN0k3q+22z62N7S+7iW9ne114G991v6+XvS68t0vXm83jzfLjjH/AF+v064/iLgvG+MuEsTxHiOtxf8AZtM2nxj0yV0rJ2yNa5jIX5W7D2tD3j3LXPSNxfw3ifDnDHCnCOIVmJYVw9JUTPq6uFzHmR73Otf1nbnmuAouuV8/wDvfH6unH8vLxxvT/a643N9z/tU5Tkt6uUubtWJ2VrfuvQ3BvHfBuA8JccYDiuNV1Di2OYj12FUslNK8PjDXizXgZZL5fuvnO8iV812/wB9v1rj4vPnxy3x/Xpfrd+i8O7bJ0tZf1FhE7X1M0MTO29z5CGtaO8lZDFMNrMEqqigxCmlo6ujla6WnlGYxu7/gu0n4vLjjk+nXh5MeSWq0u4n3U7nBbc665O9X5WlbdH0n2qZ1rB/ZtT7/7N02Ouf81uF7H7q5P1W2v4f9rbf7UfL9v7r5vX/AGfOvnPkvt7L3v4ufD82v+P0/wDtf/ZOv4O+K99r+S975fPy8evO5fN//9k=" alt="Ahmed and Rawan dressed as bride and groom as children"></div>
+    <div class="keepsake-caption" data-en="already matching in white and black, years ago" data-ar="من زمان وإحنا متناسقين بالأبيض والأسود">already matching in white and black, years ago</div>
+  </div>
+
+  <div class="music">
+    <div class="section-title" data-en="A little something to set the mood" data-ar="لمسة موسيقية">A little something to set the mood</div>
+    <audio id="wedding-audio" preload="auto" controls style="width:100%;max-width:320px;">
+      <source src="zaffa.m4a" type="audio/mp4">
+    </audio>
+  </div>
+
+  <section class="rsvp-trigger">
+    <div class="section-title" data-en="Confirm Your Attendance" data-ar="تأكيد الحضور">Confirm Your Attendance</div>
+    <p data-en="To help us prepare for a joyful celebration, kindly confirm your attendance." data-ar="عشان نقدر نجهز لاحتفال يليق بيكم، ياريت تأكدوا حضوركم.">To help us prepare for a joyful celebration, kindly confirm your attendance.</p>
+    <button type="button" class="rsvp-seal" id="rsvp-open"><span>A&amp;R</span></button>
+  </section>
+
+  <div class="closing">
+    <div class="closing-line" data-en="Hope to see you there!" data-ar="في انتظار حضوركم!">Hope to see you there!</div>
+    <div class="closing-names" data-en="Ahmed &amp; Rawan" data-ar="أحمد و روان">Ahmed &amp; Rawan</div>
+  </div>
+
+  <footer data-en="WITH LOVE &middot; AHMED &amp; RAWAN &middot; 2026" data-ar="بكل الحب &middot; أحمد و روان &middot; ٢٠٢٦">WITH LOVE &middot; AHMED &amp; RAWAN &middot; 2026</footer>
+</div>
+
+<div class="rsvp-modal-backdrop" id="rsvp-backdrop">
+  <div class="rsvp-modal">
+    <button type="button" class="rsvp-modal-close" id="rsvp-close">&times;</button>
+    <div class="section-title" data-en="Confirm Your Attendance" data-ar="تأكيد الحضور">Confirm Your Attendance</div>
+    <form class="rsvp-form" id="rsvp-form">
+      <input type="text" id="guest-name" placeholder="Your full name" required>
+      <select id="guest-attending" required>
+        <option value="" disabled selected>Will you attend?</option>
+        <option value="yes">Accepts with pleasure</option>
+        <option value="no">Declines with regret</option>
+      </select>
+      <button type="submit" class="btn btn-solid">SEND VIA WHATSAPP</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  var weddingAudio = document.getElementById('wedding-audio');
+  function playWeddingAudioFrom137(){
+    if(!weddingAudio) return;
+    try{ weddingAudio.currentTime = 97; }catch(e){}
+    weddingAudio.play().catch(function(){});
+  }
+
+  // تفعيل الدخلة السينمائية عند الضغط على الختم بالمللي مثل الفيديو
+  var envelope = document.getElementById('envelope-overlay');
+  var envelopeSeal = document.getElementById('envelope-seal');
+  var envelopeOpened = false;
+
+  envelopeSeal.addEventListener('click', function(){
+    if(envelopeOpened) return;
+    envelopeOpened = true;
+    envelope.classList.add('glowing');
+    playWeddingAudioFrom137();
+
+    setTimeout(function(){
+      envelope.classList.remove('glowing');
+      envelope.classList.add('flaps-open');
+      envelope.classList.add('card-reveal');
+    }, 400);
+
+    setTimeout(function(){
+      envelope.classList.add('card-expand');
+    }, 1400);
+
+    setTimeout(function(){
+      envelope.classList.add('opened');
+      document.getElementById('body-root').classList.remove('no-scroll');
+    }, 2400);
+  });
+
+  // العد التنازلي
+  var weddingDate = new Date("2026-11-24T21:00:00").getTime();
+  function updateCountdown(){
+    var now = new Date().getTime();
+    var diff = weddingDate - now;
+    if(diff < 0) return;
+    document.getElementById('cd-days').textContent = Math.floor(diff / (1000*60*60*24));
+    document.getElementById('cd-hours').textContent = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    document.getElementById('cd-mins').textContent = Math.floor((diff % (1000*60*60)) / (1000*60));
+    document.getElementById('cd-secs').textContent = Math.floor((diff % (1000*60)) / 1000);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // مودال الحضور والواتساب
+  var rsvpBackdrop = document.getElementById('rsvp-backdrop');
+  document.getElementById('rsvp-open').addEventListener('click', function(){ rsvpBackdrop.classList.add('show'); });
+  document.getElementById('rsvp-close').addEventListener('click', function(){ rsvpBackdrop.classList.remove('show'); });
+
+  document.getElementById('rsvp-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('guest-name').value.trim();
+    var attending = document.getElementById('guest-attending').value;
+    var message = "Hi, this is " + name + ". " + (attending === 'yes' ? "I would be delighted to attend your wedding!" : "I won't be able to make it.");
+    window.open("https://wa.me/201276531456?text=" + encodeURIComponent(message), "_blank");
+  });
+
+  // زر اللغة
+  function setLanguage(lang){
+    var body = document.getElementById('body-root');
+    var html = document.getElementById('html-root');
+    body.classList.toggle('ar', lang === 'ar');
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.querySelectorAll('[data-en]').forEach(function(el){
+      el.textContent = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+    });
+  }
+  document.getElementById('btn-en').addEventListener('click', function(){ setLanguage('en'); });
+  document.getElementById('btn-ar').addEventListener('click', function(){ setLanguage('ar'); });
+</script>
+</body>
+</html>
